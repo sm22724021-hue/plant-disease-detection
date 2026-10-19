@@ -1,20 +1,22 @@
-# Plant Health Advisor
-### Local leaf-image screening and crop health information
+# Plant Disease Detection Using AI/ML
+### BCA Third-Year Summer Project | University Examination & Viva Ready
 
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.15+-orange.svg)](https://tensorflow.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.32+-red.svg)](https://streamlit.io/)
-An offline image-based plant health screening application. It runs a trained image classifier locally and connects supported predictions with crop and disease information. The model can recognize only the conditions represented by labeled images used during training; catalog information for other crops does not mean the model can diagnose them.
+[![License](https://img.shields.io/badge/License-Academic%20Use-green.svg)]()
+
+An end-to-end, production-grade Artificial Intelligence and Deep Learning system designed to identify and classify plant foliar diseases from leaf images. The application leverages **Transfer Learning (MobileNetV2)** with ImageNet pretrained feature representations, depthwise separable convolutions, automated stratified dataset splitting, real-time probability confidence ranking, and an agricultural advisory knowledge base.
 
 ---
 
 ## Table of Contents
-1. [Application Overview](#1-application-overview)
+1. [Project Overview](#1-project-overview)
 2. [Key Features](#2-key-features)
 3. [Supported Crops & Pathologies](#3-supported-crops--pathologies)
 4. [Technology Stack](#4-technology-stack)
 5. [System Requirements](#5-system-requirements)
-6. [Application Architecture](#6-application-architecture)
+6. [Project Architecture](#6-project-architecture)
 7. [Installation & Setup](#7-installation--setup)
 8. [Dataset Acquisition & Preparation](#8-dataset-acquisition--preparation)
 9. [Model Training](#9-model-training)
@@ -23,21 +25,26 @@ An offline image-based plant health screening application. It runs a trained ima
 12. [How the AI Pipeline Works](#12-how-the-ai-pipeline-works)
 13. [How to Add New Crops & Disease Classes](#13-how-to-add-new-crops--disease-classes)
 14. [Troubleshooting & FAQs](#14-troubleshooting--faqs)
-15. [Model Coverage and Safe Use](#15-model-coverage-and-safe-use)
+15. [University Viva Defense Guide (15 Questions & Answers)](#15-university-viva-defense-guide)
 
 ---
 
-## 1. Application Overview
+## 1. Project Overview
 
-The application accepts a leaf photo from file upload or camera capture and compares it with the classes in the active model. It is a screening aid, not a confirmed diagnosis, and its coverage depends on the training data installed with the model.
+Plant pathologies threaten between 20% to 40% of global agricultural yields every year. Traditional agronomic diagnosis relies on manual visual examination by scarce agricultural extension specialists, leading to delayed diagnoses, misapplication of chemical pesticides, and substantial financial losses for smallholder farmers.
 
-The active model combines the PlantVillage color dataset with a CC BY 4.0 chilli-leaf dataset: 43 labeled conditions across 15 crop names. It includes hot chilli with five classes, as well as bell pepper. The combined model scored 92.49% overall on a 10,788-image held-out test set, but chilli-specific scores vary and have small test counts (10-29 images per chilli class). Chilli results are limited screening only, not confirmed diagnoses; field photographs and local varieties may differ from the datasets.
+This project delivers a complete, local machine learning solution that:
+- Accepts leaf images via file upload or camera capture.
+- Analyzes leaf tissue using deep convolutional representations.
+- Predicts whether the specimen is **Healthy** or **Diseased**.
+- Identifies the specific fungal, bacterial, or viral disease class.
+- Outputs top-3 prediction probabilities with calibrated confidence scores.
+- Provides actionable symptoms, prevention tips, and safe management protocols.
 
 ---
 
 ## 2. Key Features
 
-- **Language Choice:** First-open language dialog with English, Hindi, Marathi, Gujarati, and Bengali UI text; users can change it from the sidebar.
 - **Genuine Neural Network Inference:** Real deep learning model execution; zero hardcoded responses or dummy mocks.
 - **Lightweight Architecture:** Utilizes MobileNetV2 (~14 MB model footprint) for sub-second CPU inference on ordinary laptops.
 - **Dynamic Class Adaptation:** Class labels are dynamically inferred from the dataset directory; no manual class arrays required.
@@ -48,33 +55,20 @@ The active model combines the PlantVillage color dataset with a CC BY 4.0 chilli
 
 ---
 
-## 3. Current Model Coverage
+## 3. Supported Crops & Pathologies
 
-The active model recognizes 43 classes across these crops:
+The system ships with pre-configured agronomic profiles for major agricultural crops:
 
 | Crop | Supported Conditions & Diseases |
 |---|---|
-| **Apple** | Apple Scab, Black Rot, Cedar Apple Rust, Healthy |
-| **Blueberry** | Healthy |
-| **Cherry** | Powdery Mildew, Healthy |
-| **Chilli / Hot pepper** | Cercospora, Murda Complex (mites/thrips), Nutritional Stress, Powdery Mildew, Healthy |
-| **Corn (Maize)** | Cercospora Leaf Spot / Gray Leaf Spot, Common Rust, Northern Leaf Blight, Healthy |
-| **Grape** | Black Rot, Esca, Leaf Blight, Healthy |
-| **Orange** | Huanglongbing (Citrus Greening) |
-| **Peach** | Bacterial Spot, Healthy |
-| **Pepper (Bell)** | Bacterial Spot, Healthy |
+| **Tomato** | Early Blight, Late Blight, Bacterial Spot, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Tomato Yellow Leaf Curl Virus (TYLCV), Tomato Mosaic Virus (ToMV), Healthy |
 | **Potato** | Early Blight, Late Blight, Healthy |
-| **Raspberry** | Healthy |
-| **Soybean** | Healthy |
-| **Squash** | Powdery Mildew |
-| **Strawberry** | Leaf Scorch, Healthy |
-| **Tomato** | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Yellow Leaf Curl Virus, Mosaic Virus, Healthy |
+| **Pepper (Bell)** | Bacterial Spot, Healthy |
+| **Maize (Corn)** | Gray Leaf Spot (*Cercospora*), Common Rust, Northern Leaf Blight, Healthy |
+| **Apple** | Apple Scab, Black Rot, Cedar Apple Rust, Healthy |
+| **Grape** | Black Rot, Esca (*Black Measles*), Leaf Blight (*Isariopsis*), Healthy |
 
-The chilli dataset has 528 images. In the held-out test data, class F1 scores were: Cercospora 81.63% (23 images), Murda Complex 70.97% (16), Nutritional Stress 62.07% (15), Powdery Mildew 96.55% (15), and Healthy 70.00% (10). These results are limited screening evidence, not field-level guarantees; confirm suspected conditions with a local crop adviser.
-
-The model combines the [PlantVillage color dataset](https://huggingface.co/datasets/mohanty/PlantVillage) (CC BY-SA 3.0) and the [Chilli Leaf Disease Classification dataset](https://github.com/ai-agriculture-circuits-and-systems/chilli_leaf_classification) (CC BY 4.0). The Chilli dataset includes its original Mendeley Data split files, but those lists do not match the published class folders. This application creates a deterministic 70/15/15 split and groups near-duplicate images together before splitting.
-
-The reference catalogue includes additional conditions; a catalogue entry does not mean the model can diagnose it.
+*Note: New crops and disease classes can be added seamlessly by placing image folders into `dataset/train/` without editing code.*
 
 ---
 
@@ -95,12 +89,12 @@ The reference catalogue includes additional conditions; a catalogue entry does n
 - **Operating System:** Windows 10/11, macOS (Intel or Apple Silicon M1/M2/M3), or Linux (Ubuntu 20.04+)
 - **Processor (CPU):** Intel Core i3/i5/i7 (8th Gen+) or AMD Ryzen 3/5/7, or Apple Silicon
 - **RAM:** 8 GB minimum (16 GB recommended for model training)
-- **Storage:** At least 5 GB free disk space for the downloaded PlantVillage archive, prepared images, and model artifacts
+- **Storage:** At least 3 GB free disk space (accounting for dataset and model weights)
 - **GPU:** Optional. Model training executes on standard multi-core CPUs; NVIDIA CUDA GPU accelerates training if available.
 
 ---
 
-## 6. Application Architecture
+## 6. Project Architecture
 
 ```
 plant-disease-detection/
@@ -111,11 +105,11 @@ plant-disease-detection/
 ├── preprocess_data.py          # Dataset cleaner, deduplicator & 70/15/15 splitter
 ├── download_dataset.py         # Dataset setup helper and verification script
 ├── requirements.txt            # Pinned, tested Python package dependencies
-├── README.md                   # Application and model coverage guide
+├── README.md                   # Comprehensive project documentation
 │
-├── models_plantvillage_chilli/ # Active 43-class model and label mapping
-├── models_plantvillage/        # Previous 38-class model retained as backup
-├── models/                     # Previous three-class model retained as backup
+├── models/                     # Saved models and class labels
+│   ├── plant_disease_model.keras  # Best trained MobileNetV2 model weights
+│   └── class_names.json        # Dynamic index-to-class mapping
 │
 ├── dataset/                    # Dataset directory structure
 │   ├── train/                  # 70% Training images (class subfolders)
@@ -129,7 +123,7 @@ plant-disease-detection/
 │   ├── model.py                # MobileNetV2 and custom CNN architectures
 │   └── disease_info.py         # Agronomic knowledge base & dynamic parser
 │
-├── results_plantvillage_chilli/ # Active model charts and evaluation reports
+├── results/                    # Generated charts & analytical reports
 │   ├── accuracy.png            # Training vs Validation accuracy curve
 │   ├── loss.png                # Training vs Validation loss curve
 │   ├── confusion_matrix.png    # Test set confusion matrix heatmap
@@ -158,7 +152,7 @@ cd plant-disease-detection
 ```
 
 ### Step 2: Create a Python Virtual Environment
-Creating a virtual environment isolates application dependencies:
+Creating a virtual environment isolates project dependencies:
 
 - **macOS / Linux:**
   ```bash
@@ -191,7 +185,7 @@ pip install -r requirements.txt
 
 ## 8. Dataset Acquisition & Preparation
 
-The training scripts can use the open-access **PlantVillage** dataset (approximately 54,305 leaf images across 38 classes).
+The project is designed around the open-access **PlantVillage** dataset (~54,305 leaf images across 38 classes).
 
 ### Option A: Manual Download from Kaggle (Recommended)
 1. Download the dataset zip from Kaggle:
@@ -221,60 +215,23 @@ Run:
 python download_dataset.py --verify
 ```
 
-### Option C: Prepare the full PlantVillage color dataset used by the active model
-
-The PlantVillage color archive is about 2.2 GB. The commands below use the official color train/test lists; the preparation script holds out the official test list and takes 10% of the training list for validation.
-
-```bash
-mkdir -p raw_dataset/plantvillage_metadata
-curl -L --fail --retry 5 --retry-all-errors --continue-at - \\
-   --output raw_dataset/plantvillage-data.zip \\
-   https://huggingface.co/datasets/mohanty/PlantVillage/resolve/main/data.zip
-curl -L --fail --output raw_dataset/plantvillage_metadata/color_train.txt \\
-   https://huggingface.co/datasets/mohanty/PlantVillage/resolve/main/splits/color_train.txt
-curl -L --fail --output raw_dataset/plantvillage_metadata/color_test.txt \\
-   https://huggingface.co/datasets/mohanty/PlantVillage/resolve/main/splits/color_test.txt
-python prepare_plantvillage.py
-```
-
-The source dataset is licensed CC-BY-SA-3.0. Check its dataset card for attribution and redistribution terms.
-
-### Option D: Add hot chilli / hot pepper images
-
-The app's active model combines PlantVillage with the CC BY 4.0 [Chilli Leaf Disease Classification dataset](https://github.com/ai-agriculture-circuits-and-systems/chilli_leaf_classification). The checked-in class-specific split lists do not match several image folders, so `prepare_chilli_dataset.py` creates deterministic 70/15/15 splits while grouping perceptual near-duplicates together.
-
-```bash
-mkdir -p raw_dataset/chilli_source
-curl -L --fail --retry 4 --continue-at - \\
-   --output raw_dataset/chilli_source/chilli_leaf_classification.zip \\
-   https://github.com/ai-agriculture-circuits-and-systems/chilli_leaf_classification/archive/refs/heads/main.zip
-unzip -oq raw_dataset/chilli_source/chilli_leaf_classification.zip \\
-   '*/chillies/*/images/*' '*/chillies/*/sets/train.txt' \\
-   '*/chillies/*/sets/val.txt' '*/chillies/*/sets/test.txt' '*/README.md' '*/LICENSE' \\
-   -d raw_dataset/chilli_source/extracted
-python prepare_chilli_dataset.py
-python train_model.py --dataset_dir dataset_plantvillage_chilli_v2 --models_dir models_plantvillage_chilli --results_dir results_plantvillage_chilli --epochs 10 --batch_size 32
-```
-
-The chilli dataset contains 528 images across five classes and provides small held-out samples per class. The model therefore reports a chilli screening result, not a definitive diagnosis.
-
 ---
 
 ## 9. Model Training
 
 Train the deep learning model using:
 ```bash
-python train_model.py --dataset_dir dataset_plantvillage_chilli_v2 --models_dir models_plantvillage_chilli --results_dir results_plantvillage_chilli --epochs 10 --batch_size 32
+python train_model.py --epochs 15 --batch_size 32 --lr 0.001
 ```
 
 ### What happens during training:
-1. **Dynamic Class Scanning:** Reads all class folders in the selected training directory and saves a matching class mapping.
+1. **Dynamic Class Scanning:** Reads all class folders in `dataset/train/` and saves `models/class_names.json`.
 2. **Data Pipeline Optimization:** Loads images via `tf.keras.utils.image_dataset_from_directory` with GPU/CPU `AUTOTUNE` prefetching.
 3. **Biological Augmentation:** Applies random flips, gentle rotations ($\pm 15^\circ$), zoom ($\pm 15\%$), and contrast variations to prevent overfitting.
 4. **Transfer Learning Initialization:** Loads MobileNetV2 pretrained on ImageNet; freezes the base layers; initializes Global Average Pooling, Batch Normalization, Dense(256), and Dropout(0.4).
 5. **Smart Callbacks:**
    - `EarlyStopping`: Halts training if validation loss plateaus for 5 epochs.
-   - `ModelCheckpoint`: Automatically saves the best model checkpoint to the selected model directory.
+   - `ModelCheckpoint`: Automatically saves the best model checkpoint to `models/plant_disease_model.keras`.
    - `ReduceLROnPlateau`: Halves learning rate when progress stalls.
 6. **Report Generation:** Generates and saves `results/accuracy.png` and `results/loss.png`.
 
@@ -307,9 +264,13 @@ The application will launch in your default browser at:
 
 ### Exploring the Application:
 - **🌿 Home:** Executive overview, biological workflow, supported crops, and offline privacy statement.
-- **🔍 Disease Detection:** Select a crop, then upload one or more JPG/PNG images, capture a photo, or choose a sample. Analyze the batch to view separate candidate rankings and reference information for each image.
+- **🔍 Disease Detection:** Upload a JPG/PNG, capture live via webcam, or choose a sample image. Click **Detect Disease** to view:
+  - Diagnosis Card (Crop, Disease Name, Status Pill).
+  - Confidence Score and interactive visual meter.
+  - Top-3 candidate ranking with probabilities.
+  - Detailed agronomic advisory tabs (Overview, Visible Symptoms, Prevention, Field Management, and Agricultural Disclaimer).
 - **📊 Dashboard:** Live KPI cards, test accuracy, interactive training curves, confusion matrix, and a searchable crop-disease encyclopedia.
-- **ℹ️ About the Tool:** Learned model classes, coverage limits, and safe-use guidance.
+- **📖 About Project:** BCA summer project background, problem statement, objectives, architecture diagram, and viva preparation guide.
 
 ---
 
@@ -355,13 +316,13 @@ The application will launch in your default browser at:
 
 ## 13. How to Add New Crops & Disease Classes
 
-1. Add a new crop/disease class with a large, varied set of correctly labeled images in the `train`, `validation`, and `test` splits following the naming convention:
+1. Create a new folder inside `dataset/train/`, `dataset/validation/`, and `dataset/test/` following the naming convention:
    `CropName___Disease_Name` (e.g., `Mango___Anthracnose` or `Rice___Blast`).
-2. Keep images of the same physical leaf out of both training and test splits. One or a few images are not enough for reliable field use.
-3. Run `python train_model.py --dataset_dir <dataset_root> --models_dir <model_output> --results_dir <results_output> --epochs 10`.
+2. Add leaf photographs of that disease into the folder.
+3. Run `python train_model.py --epochs 15`.
 4. The system **automatically**:
    - Discovers the new class.
-   - Updates the selected output directory's `class_names.json`.
+   - Updates `models/class_names.json`.
    - Adjusts the neural network output layer.
    - Parses the crop and disease names in the UI via the dynamic fallback parser in `src/disease_info.py`.
 
@@ -390,11 +351,61 @@ pip install -r requirements.txt
 
 ---
 
-## 15. Model Coverage and Safe Use
+## 15. University Viva Defense Guide
 
-- Predictions are available only for the classes listed in `models_plantvillage_chilli/class_names.json`.
-- The model includes hot chilli classes, but their held-out test sets are small and performance varies substantially by class. Treat chilli outputs as an initial screen only.
-- The disease reference catalogue can provide information for crops beyond the classifier's coverage; it does not expand what the model can predict.
-- Image scores are screening signals, not confirmed diagnoses. Verify symptoms and consult a qualified local agricultural adviser before applying treatment.
-- The main navigation, crop selection, upload flow, result labels, and safety notices have interface translations. Detailed disease-reference descriptions and some dataset disease names remain in English; they should be professionally reviewed before relying on them in another language.
-# plant-disease-detection
+Here are **15 likely questions** asked by university external examiners during BCA project vivas, along with standard technical answers:
+
+#### Q1: What is the main objective of this project?
+**Answer:** The objective is to build an end-to-end, automated agricultural decision-support tool that uses computer vision and deep learning to identify plant foliar diseases early from leaf photographs, assisting farmers in applying targeted treatments before widespread crop damage occurs.
+
+#### Q2: Why did you choose MobileNetV2 instead of a traditional CNN from scratch?
+**Answer:** MobileNetV2 is pretrained on the 1.4-million-image ImageNet dataset, meaning its lower layers already understand fundamental visual primitives like edges, textures, and color gradients. By using Transfer Learning, we achieve higher accuracy with significantly less training time and fewer epochs. Additionally, MobileNetV2 uses depthwise separable convolutions, resulting in a small model (~14 MB) capable of running fast inference on low-cost consumer hardware without requiring an expensive GPU.
+
+#### Q3: What are Depthwise Separable Convolutions?
+**Answer:** Standard convolution performs spatial filtering and channel combining in a single step, which is computationally expensive. Depthwise separable convolution splits this into two steps:
+1. *Depthwise convolution:* applies a single 3x3 filter per input channel.
+2. *Pointwise convolution:* uses a 1x1 convolution to linearly combine the outputs across channels.
+This reduces computation and parameter count by approximately 8 to 9 times with minimal loss of accuracy.
+
+#### Q4: How did you prevent data leakage during dataset preparation?
+**Answer:** Data leakage occurs when identical or near-identical images appear in both training and test sets, artificially inflating test accuracy. In `preprocess_data.py`, we compute MD5 hashes for all images to discard duplicate files. We then perform a stratified 70% Train, 15% Validation, and 15% Test split before any training begins.
+
+#### Q5: What is the purpose of Data Augmentation?
+**Answer:** Data augmentation artificially expands the diversity of training images by applying realistic transformations like random rotations ($\pm 15^\circ$), horizontal and vertical flips, shifts, and slight contrast adjustments. This teaches the network that a leaf is still the same class regardless of its orientation or lighting, mitigating overfitting and improving real-world generalization.
+
+#### Q6: Why did you use Categorical Cross-Entropy loss?
+**Answer:** Categorical Cross-Entropy is the standard loss function for multi-class classification where each sample belongs to exactly one discrete class. It measures the divergence between the true one-hot encoded distribution and the predicted Softmax probability distribution, heavily penalizing confident wrong predictions.
+
+#### Q7: What role does the Softmax activation function play in the output layer?
+**Answer:** Softmax normalizes raw neural network outputs (logits) into a valid probability distribution where all values range between 0.0 and 1.0 and sum up to 1.0. This allows us to interpret outputs as percentage confidence scores and rank the top-3 most probable diseases.
+
+#### Q8: What is the role of the Dropout layer?
+**Answer:** Dropout is a regularization technique. During training, it randomly sets a fraction (in our case, 40%) of the hidden units' activations to zero at each update step. This prevents neurons from co-adapting excessively, forcing the network to learn robust, generalized representations.
+
+#### Q9: What callbacks were utilized during model training?
+**Answer:** We implemented three Keras callbacks:
+1. `EarlyStopping`: halts training if validation loss fails to improve for 5 consecutive epochs, restoring the best historical weights.
+2. `ModelCheckpoint`: automatically serializes the best performing model based on validation accuracy to `models/plant_disease_model.keras`.
+3. `ReduceLROnPlateau`: lowers the learning rate by a factor of 0.3 when validation loss stagnates, allowing the optimizer to settle into narrow local minima.
+
+#### Q10: What is the difference between Validation Accuracy and Test Accuracy?
+**Answer:** Validation accuracy is monitored during training to tune hyperparameters, adjust the learning rate, and trigger early stopping. Because the model indirectly influences hyperparameter selection via the validation set, an independent **Test Set** that the model has never seen during training or tuning is evaluated using `evaluate_model.py` to obtain an unbiased measure of true generalization performance.
+
+#### Q11: Why is Precision and Recall important alongside Accuracy?
+**Answer:** In agricultural diagnosis, classes can have unequal sample counts. Overall accuracy can be misleading if a majority class dominates. Precision measures how many of the detected diseased leaves actually had the disease (avoiding false alarms), while Recall (Sensitivity) measures how many actual diseased leaves the model successfully identified (avoiding missed infections). The F1-Score represents the harmonic mean of both.
+
+#### Q12: What is a Confusion Matrix?
+**Answer:** A confusion matrix is an $N \times N$ table where rows represent true ground-truth classes and columns represent predicted classes. Diagonal elements represent correct classifications, while off-diagonal elements illustrate exact points of confusion (e.g., distinguishing Early Blight from Septoria Leaf Spot due to similar dark concentric spots).
+
+#### Q13: How does Streamlit's `@st.cache_resource` optimize application performance?
+**Answer:** Without caching, Streamlit reruns the entire Python script from top to bottom on every user interaction (such as button clicks or slider adjustments). Re-loading a multi-megabyte neural network from disk on every click would cause severe lag. `@st.cache_resource` loads the model weights once into system memory and shares the instance across all interactions.
+
+#### Q14: What safety mechanisms are built into the disease recommendations?
+**Answer:** Automated AI classification is a screening and decision-support tool. It must never recommend indiscriminate chemical application. The application incorporates a clear **Agricultural Advisory Disclaimer** advising farmers to consult certified plant pathologists or local agricultural extension officers before handling restricted chemical fungicides.
+
+#### Q15: What are the future enhancements planned for this project?
+**Answer:**
+1. Exporting the trained model to TensorFlow Lite (`.tflite`) for deployment on mobile Android applications without internet connectivity.
+2. Integrating drone-based aerial imagery with YOLO object detection for canopy-level field monitoring.
+3. Multi-modal prediction by combining leaf images with temperature and humidity IoT sensor data.
+4. Adding local language voice synthesis (Hindi, Marathi, Telugu) for illiterate farmers.
